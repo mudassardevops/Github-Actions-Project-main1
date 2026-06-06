@@ -30,6 +30,17 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
       
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+      
+      - name: Resolve Maven dependencies
+        run: mvn dependency:resolve --file pom.xml
+      
       - name: Install Trivy
         run: |
           sudo apt-get install wget gnupg -y
@@ -38,8 +49,8 @@ jobs:
           sudo apt-get update -y
           sudo apt-get install trivy -y
       
-      - name: Run Trivy Filesystem Scan
-        run: trivy fs --format table -o fs-report.json .
+      - name: Run Trivy Filesystem Scan (Vulnerabilities Only)
+        run: trivy fs --scanners vuln --format table -o fs-report.json .
       
       - name: Install Gitleaks
         run: sudo apt-get install gitleaks -y
