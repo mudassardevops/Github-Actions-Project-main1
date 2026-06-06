@@ -6,7 +6,7 @@ on:
 
 jobs:
   build-and-compile:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     
     steps:
       - name: Checkout source code
@@ -23,7 +23,7 @@ jobs:
         run: mvn -B clean package --file pom.xml
 
   security-checks:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build-and-compile
     
     steps:
